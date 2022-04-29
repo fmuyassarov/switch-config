@@ -1,0 +1,24 @@
+---
+  - name: show run commandasi, xoxlagan nom berishiz mumkin
+    # inventory dagi gruppani nomi
+    hosts: switches
+    gather_facts: no
+    # cherez network orqali ulanasan degani
+    connection: network_cli
+
+    tasks:
+      - name: show run comandasi va nihoyat :)
+      # Cisco ni operatsionkasi IOS bolgani uchun, ios_command
+      # degan module ni ishlatamiz, cisco ni asosiy comandlari uchun doim shu.
+        ios_command:
+          commands:
+          - show run
+      # chiqgan natijani o'zgaruvchiga soxranit qilamiz, orgaruvchimizni nomi natija
+        register: natija
+
+      - name: show run ni natijasini (natija) save qilish file ga. 
+      # Har bir switch uchun, alohida file yaratiladi o'szini nomi bilan
+      # yani, natija switch1.txt, switch2.txt
+        copy:
+          content: "{{ natija.stdout | replace('\\n', '\n') }}"
+          dest: "{{ inventory_hostname }}.txt"
